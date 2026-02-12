@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Andy · Prontuário Odontológico</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00a896">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #f4f9fc;
+      color: #1e2f4e;
+      line-height: 1.5;
+      padding-bottom: 70px;
+    }
+
+    /* cabeçalho com símbolo AR */
+    .app-header {
+      background: linear-gradient(145deg, #028476, #00a896);
+      color: white;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0,168,150,0.2);
+    }
+
+    .logo {
+      background: white;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: #028476;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .logo span {
+      transform: scale(0.9);
+      letter-spacing: -2px;
+    }
+
+    .app-header h1 {
+      font-size: 1.7rem;
+      font-weight: 600;
+    }
+
+    .app-header h1 small {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      display: block;
+    }
+
+    /* navegação inferior (PWA style) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 12px;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.04);
+      border-top: 1px solid #e6edf2;
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #7a8b9b;
+      font-size: 0.75rem;
+      transition: 0.2s;
+      padding: 6px 0;
+    }
+
+    .nav-item i {
+      font-size: 1.5rem;
+      margin-bottom: 2px;
+    }
+
+    .nav-item.active {
+      color: #00a896;
+      font-weight: 500;
+    }
+
+    /* conteúdo principal */
+    .container {
+      padding: 20px 18px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .section {
+      display: none;
+      animation: fade 0.2s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0.4; } to { opacity: 1; }
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+      border: 1px solid #eaf0f5;
+    }
+
+    .btn {
+      background: #00a896;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      transition: 0.2s;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .btn-outline {
+      background: white;
+      color: #00a896;
+      border: 1.5px solid #00a896;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      width: auto;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1.5px solid #dbe7ed;
+      border-radius: 18px;
+      font-size: 1rem;
+      margin-bottom: 14px;
+      background: white;
+      transition: 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #00a896;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0,168,150,0.1);
+    }
+
+    label {
+      font-weight: 600;
+      color: #1e3b5c;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .tooth-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    .tooth {
+      aspect-ratio: 1/1;
+      background: #f4fafc;
+      border: 2px solid #bdd4de;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #1e2f4e;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .tooth.selected {
+      background: #00a896;
+      color: white;
+      border-color: #007a6b;
+    }
+
+    .tooth span {
+      font-size: 1.2rem;
+    }
+
+    .radio-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .radio-item {
+      background: #f2f6f9;
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100px;
+      border: 1px solid #d4e0e8;
+    }
+
+    .radio-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #d9e2e9;
+    }
+
+    .document-preview {
+      background: #f1f8fa;
+      padding: 20px;
+      border-radius: 20px;
+      margin-top: 20px;
+      border-left: 6px solid #00a896;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo"><span>AR</span></div>
+    <h1>Andy <small>prontuário inteligente</small></h1>
+  </header>
+
+  <div class="container" id="app">
+    <!-- PACIENTES -->
+    <div id="patientsSection" class="section active">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="font-size: 1.6rem;"><i class="fas fa-users" style="color: #00a896;"></i> Pacientes</h2>
+          <button class="btn-small btn" onclick="addPatient()"><i class="fas fa-plus"></i> Novo</button>
+        </div>
+        <div id="patientList"></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom: 16px;"><i class="fas fa-tooth"></i> Acessar prontuário</h3>
+        <select id="patientSelector" onchange="loadClinicalRecord()">
+          <option value="">— Selecione um paciente —</option>
+        </select>
+        <button class="btn" onclick="openRecord()"><i class="fas fa-file-medical"></i> Abrir ficha clínica</button>
+      </div>
+    </div>
+
+    <!-- PRONTUÁRIO CLÍNICO -->
+    <div id="recordSection" class="section">
+      <div class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+          <i class="fas fa-arrow-left" style="font-size: 1.6rem; color: #00a896;" onclick="showSection('patients')"></i>
+          <h2 style="font-size: 1.5rem;">🦷 Prontuário</h2>
+        </div>
+        <div id="recordPatientInfo" style="background: #e0f2f0; padding: 16px; border-radius: 18px; margin-bottom: 24px;">
+          <strong id="recordPatientName"></strong>
+        </div>
+        
+        <label>Odontograma (toque no dente)</label>
+        <div class="tooth-grid" id="teethGrid"></div>
+        
+        <label>Anotações / Evolução</label>
+        <textarea id="clinicalNotes" rows="4" placeholder="Descreva o procedimento, observações..."></textarea>
+        
+        <div class="flex-row">
+          <button class="btn-small btn-outline" onclick="saveClinicalRecord()"><i class="fas fa-save"></i> Salvar</button>
+          <button class="btn-small btn-outline" onclick="showSection('documents')"><i class="fas fa-file-prescription"></i> Gerar documento</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTOS (GERADOR) -->
+    <div id="documentsSection" class="section">
+      <div class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+          <i class="fas fa-arrow-left" style="font-size: 1.6rem; color: #00a896;" onclick="showSection('patients')"></i>
+          <h2 style="font-size: 1.5rem;">📄 Documentos</h2>
+        </div>
+        <select id="docPatientSelector" onchange="updateDocPatient()">
+          <option value="">— Paciente —</option>
+        </select>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0;">
+          <button class="btn-small" onclick="generateDoc('prescricao')"><i class="fas fa-prescription"></i> Receituário</button>
+          <button class="btn-small" onclick="generateDoc('orcamento')"><i class="fas fa-calculator"></i> Orçamento</button>
+          <button class="btn-small" onclick="generateDoc('laudo')"><i class="fas fa-file-signature"></i> Laudo</button>
+          <button class="btn-small" onclick="generateDoc('atestado')"><i class="fas fa-stethoscope"></i> Atestado</button>
+        </div>
+        <div id="docPreviewArea" class="document-preview">
+          <strong>📋 Prévia do documento</strong>
+          <div id="docContent" style="margin-top: 12px; white-space: pre-wrap; font-family: monospace;"></div>
+          <button class="btn-small" style="margin-top: 16px;" onclick="printDoc()"><i class="fas fa-print"></i> Imprimir</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RADIOGRAFIAS -->
+    <div id="xraySection" class="section">
+      <div class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+          <i class="fas fa-arrow-left" style="font-size: 1.6rem; color: #00a896;" onclick="showSection('patients')"></i>
+          <h2 style="font-size: 1.5rem;">🩻 Radiografias</h2>
+        </div>
+        <select id="xrayPatientSelector" onchange="loadXrays()">
+          <option value="">— Selecione paciente —</option>
+        </select>
+        <div style="margin: 24px 0;">
+          <label for="xrayUpload">Adicionar nova radiografia</label>
+          <input type="file" id="xrayUpload" accept="image/*" onchange="handleXrayUpload(event)">
+        </div>
+        <div id="xrayGallery" class="radio-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVEGAÇÃO INFERIOR -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="showSection('patients')" id="nav-patients">
+      <i class="fas fa-address-book"></i>
+      <span>Pacientes</span>
+    </div>
+    <div class="nav-item" onclick="showSection('documents')" id="nav-documents">
+      <i class="fas fa-file-alt"></i>
+      <span>Documentos</span>
+    </div>
+    <div class="nav-item" onclick="showSection('xray')" id="nav-xray">
+      <i class="fas fa-x-ray"></i>
+      <span>Raio-X</span>
+    </div>
+  </nav>
+
+  <script src="app.js"></script>
+  <script>
+    // Registrar service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('✅ Service Worker Andy registrado'))
+        .catch(err => console.error('Erro SW:', err));
+    }
+  </script>
+</body>
+</html>
